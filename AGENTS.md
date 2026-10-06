@@ -29,11 +29,11 @@ Each one is tested or will be. If a change would weaken one, stop and ask.
 
 1. **The database arbitrates every race.** No in-memory locks, caches or check-then-act logic for correctness.
 2. **Checkout:** `INSERT … ON CONFLICT (merchant_id, order_reference) DO NOTHING RETURNING`, then `SELECT` and compare `amount` and `currency`. Never `SELECT`-then-`INSERT`. `201` new, `200` matching retry, `409` mismatch.
-3. **Webhook transaction order:** lock the order with `SELECT … FOR NO KEY UPDATE` → decide the outcome with `allowedFrom` → insert the event with its final outcome, `ON CONFLICT (event_id) DO NOTHING` → `UPDATE` the order only if applied → commit.
+3. **Webhook transaction order:** lock the order with `SELECT … FOR NO KEY UPDATE` → decide the outcome with `allowedTo` → insert the event with its final outcome, `ON CONFLICT (event_id) DO NOTHING` → `UPDATE` the order only if applied → commit.
 4. **`FOR NO KEY UPDATE`, never `FOR UPDATE`**, and never a plain `SELECT` before a status change.
 5. **The event insert and the order update are in the same transaction.** Never split them.
 6. **Send the HTTP response only after the transaction has committed.** Return a result object from the transaction callback; respond after `await db.transaction(…)` resolves.
-7. **Status only moves up**, enforced by the `allowedFrom` table in TypeScript, not by enum ordering in SQL.
+7. **Status only moves up**, enforced by the `allowedTo` table in TypeScript, not by enum ordering in SQL.
 8. **Stale or equal-rank events and same-ID-different-payload events get `200`.** Never a non-2xx for something a retry can't fix.
 9. **Webhook codes:** malformed `400`, unknown order `404`, database failure `500`. Don't change these.
 10. **Isolation level is READ COMMITTED** (the Postgres default). Don't raise it.
@@ -60,7 +60,7 @@ src/
   config.ts           env parsing with Zod; TEST_TX_DELAY_MS guard
   db/schema.ts        enums, tables, constraints
   db/client.ts        pg Pool (max = DB_POOL_SIZE) + drizzle instance
-  domain/status.ts    allowedFrom table and helpers
+  domain/status.ts    allowedTo table and helpers
   domain/provider.ts  provider status → our status map
   http/schemas.ts     Zod request schemas
   http/orders.ts      POST /orders, GET /orders/:id

@@ -146,14 +146,16 @@ stateDiagram-v2
 
 Every arrow points right: an event can only move an order to a higher-ranked status.
 
-The transition table lives in TypeScript as `allowedFrom`, keyed by the target status:
+The transition table lives in TypeScript as `allowedTo`, keyed by the current status, listing the statuses it may move to. It reads like the state diagram above, and a terminal status is simply an empty list:
 
-| Target status | Allowed from |
+| Current status | May move to |
 | --- | --- |
-| `processing` | `pending` |
-| `failed` | `pending`, `processing` |
-| `succeeded` | `pending`, `processing`, `failed` |
-| `pending` | Never (initial status only) |
+| `pending` | `processing`, `failed`, `succeeded` |
+| `processing` | `failed`, `succeeded` |
+| `failed` | `succeeded` |
+| `succeeded` | Nothing (terminal) |
+
+Nothing moves to `pending`: it is the initial status only.
 
 An event whose target is not allowed from the current status is acknowledged with a `2xx`, recorded with outcome `ignored`, and leaves the order unchanged. It is never rejected: a non-2xx would make the provider retry for days something that can never succeed.
 
@@ -175,7 +177,7 @@ Events may arrive late, out of order or more than once. Ordering needs no timest
 
 Conflicting outcomes under different event IDs (failed and succeeded) resolve to `succeeded`. A same-status event with a new event ID is a no-op, recorded as `ignored`. `occurred_at` is audit-only.
 
-The table lives in application code, not in the enum's declaration order, so a future flow that isn't a straight line (refunds, disputes) can add edges such as `refunded: ['succeeded']` without changing how transitions are enforced.
+The table lives in application code, not in the enum's declaration order, so a future flow that isn't a straight line (refunds, disputes) can add edges such as `succeeded: ['refunded']` without changing how transitions are enforced.
 
 ## Checkout idempotency
 
@@ -209,7 +211,7 @@ Each webhook is one synchronous transaction that locks the order row first, and 
 1. Validate the payload with Zod. On failure, return `400` without touching the database.
 2. `BEGIN` (READ COMMITTED).
 3. `SELECT … FROM orders WHERE id = $order_id FOR NO KEY UPDATE`. No row: end the transaction, log it, return `404`.
-4. Map the provider status to our enum. Decide the outcome: `applied` if the current status is in `allowedFrom[target]`, otherwise `ignored`.
+4. Map the provider status to our enum. Decide the outcome: `applied` if the target is in `allowedTo[current]`, otherwise `ignored`.
 5. `INSERT INTO webhook_events (…, outcome) … ON CONFLICT (event_id) DO NOTHING RETURNING`.
    - No row comes back, so this is a duplicate. Read the stored event and compare `order_id` and `status`. Match: return `200`. Differ: log the conflict and return `200`. In both cases the order is untouched and nothing is written.
 6. If the outcome is `applied`: `UPDATE orders SET status = $target, updated_at = now() WHERE id = $order_id`.
@@ -262,7 +264,7 @@ Locks are held until the transaction ends, so P waits for S's commit, not just i
 
 **Why READ COMMITTED.** The locking select re-reads the latest committed row after waiting. Under REPEATABLE READ it would instead fail with a serialization error, and every webhook would need a retry loop.
 
-**Alternative considered:** a conditional `UPDATE … WHERE id = $id AND status = ANY($allowedFrom) RETURNING id`, with zero rows meaning ignored. It is equally correct in one statement. The explicit lock was chosen because it is easier to reason about and defend, gives the current status for logging why an event was ignored, and leaves room for checks between the read and the write.
+**Alternative considered:** a conditional `UPDATE … WHERE id = $id AND status = ANY($statusesThatMayMoveToTarget) RETURNING id`, with zero rows meaning ignored. It is equally correct in one statement. The explicit lock was chosen because it is easier to reason about and defend, gives the current status for logging why an event was ignored, and leaves room for checks between the read and the write.
 
 ## Failure handling
 

@@ -41,9 +41,9 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 5. Status domain
 
-- [ ] `src/domain/status.ts`: `allowedFrom` table and a `canTransition(from, to)` helper
-- [ ] `src/domain/provider.ts`: provider status → our status map
-- [ ] Small unit test covering every cell of the transition table
+- [x] `src/domain/status.ts`: `allowedTo` table and a `canTransition(from, to)` helper
+- [x] `src/domain/provider.ts`: provider status → our status map
+- [x] Small unit test covering every cell of the transition table
 
 **Done when:** the unit test passes and matches design.md › Payment status model.
 
