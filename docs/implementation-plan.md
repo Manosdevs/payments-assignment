@@ -58,12 +58,12 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 7. Test harness and checkout tests
 
-- [ ] Jest `globalSetup` runs `migrate()` against `TEST_DATABASE_URL`
-- [ ] `beforeEach` truncates `webhook_events, orders CASCADE`
-- [ ] Test pool size 20
-- [ ] Test 1: 10 concurrent identical checkouts (use `concurrency-tests` skill)
-- [ ] Test 3: reused reference with a different amount
-- [ ] Test 5: same reference, different merchant
+- [x] Jest `globalSetup` runs `migrate()` against `TEST_DATABASE_URL`
+- [x] `beforeEach` truncates `webhook_events, orders CASCADE`
+- [x] Test pool size 20
+- [x] Test 1: 10 concurrent identical checkouts (use `concurrency-tests` skill)
+- [x] Test 3: reused reference with a different amount
+- [x] Test 5: same reference, different merchant
 
 **Done when:** `docker compose run --rm app npm test` is green.
 
