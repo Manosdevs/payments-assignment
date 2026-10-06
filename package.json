@@ -14,23 +14,30 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
+    "test": "jest --runInBand",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "dotenv": "^18.0.5",
-    "drizzle-orm": "^0.45.3",
-    "express": "^5.2.1",
-    "pg": "^8.23.1",
-    "zod": "^4.6.5"
+    "dotenv": "18.0.5",
+    "drizzle-orm": "0.45.3",
+    "express": "5.2.1",
+    "pg": "8.23.1",
+    "pino": "10.4.0",
+    "zod": "4.6.5"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^24.19.1",
-    "@types/pg": "^8.23.1",
-    "drizzle-kit": "^0.31.11",
-    "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "@types/express": "5.0.6",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.19.1",
+    "@types/pg": "8.23.1",
+    "@types/supertest": "7.2.1",
+    "drizzle-kit": "0.31.11",
+    "jest": "30.5.2",
+    "supertest": "7.3.1",
+    "ts-jest": "29.4.14",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
   }
 }
