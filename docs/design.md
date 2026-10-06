@@ -93,7 +93,9 @@ Two tables and two Postgres enums: `payment_status` (`pending`, `processing`, `f
 | `created_at` | `timestamptz` not null | Default `now()` |
 | `updated_at` | `timestamptz` not null | Default `now()`; set to `now()` in the same `UPDATE` that changes status |
 
-Constraint: `UNIQUE (merchant_id, order_reference)`.
+Constraints: `UNIQUE (merchant_id, order_reference)` and `CHECK (amount > 0)`.
+
+**Where validation lives.** A non-positive amount is a money bug wherever the row comes from (raw SQL, a future endpoint), and the rule never changes, so the database enforces it as well as Zod. The currency format is input hygiene and stays in Zod only: a malformed currency can at worst cause a `409` mismatch, never a wrong amount, and the rule may later become an ISO 4217 allowlist that belongs in application code.
 
 ### webhook_events
 
@@ -375,4 +377,4 @@ The main gap is authentication: everything else here is a deliberate simplificat
 
 Decisions not yet made. An agent must not resolve these on its own; ask the human (see `.claude/skills/design-change`).
 
-- **Database CHECK constraints for `amount > 0` and the currency format.** Validation currently lives only in Zod. Adding CHECKs would make the database reject bad rows inserted outside the app, at the cost of duplicating the rules.
+None at the moment. (Resolved: database CHECK on `amount > 0`, currency format in Zod only; see Data model › orders.)

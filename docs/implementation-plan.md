@@ -23,10 +23,10 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 3. Schema and migration
 
-- [ ] `src/db/schema.ts`: enums `payment_status` and `event_outcome`; tables `orders` and `webhook_events` exactly as in design.md › Data model
-- [ ] `UNIQUE (merchant_id, order_reference)`; `webhook_events.event_id` primary key; foreign key to `orders(id)`
-- [ ] `npx drizzle-kit generate`, then **read the generated SQL** and confirm every constraint is there
-- [ ] Ask the human about the open question on CHECK constraints before finalising
+- [x] `src/db/schema.ts`: enums `payment_status` and `event_outcome`; tables `orders` and `webhook_events` exactly as in design.md › Data model
+- [x] `UNIQUE (merchant_id, order_reference)`; `webhook_events.event_id` primary key; foreign key to `orders(id)`
+- [x] `npx drizzle-kit generate`, then **read the generated SQL** and confirm every constraint is there
+- [x] Ask the human about the open question on CHECK constraints before finalising
 
 **Done when:** the migration applies cleanly to an empty database and `\d orders` / `\d webhook_events` match the design.
 
