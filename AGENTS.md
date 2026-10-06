@@ -17,11 +17,8 @@ That changes how you work:
 
 | File | What it is |
 | --- | --- |
-| `docs/spec.pdf` | The original assignment |
 | `docs/design.md` | Every behaviour: API, schema, status model, transactions, tests, setup |
-| `docs/justifications.md` | Why each decision was made, including mistaken ideas to avoid |
 | `docs/implementation-plan.md` | Build order with checkboxes. Work through it in order. |
-| `docs/ai-log.md` | Running log of AI help (create it on first use) |
 
 ## Invariants: never break these
 
@@ -94,7 +91,7 @@ npm run typecheck                                    # tsc --noEmit
    - `db-code` for any query, transaction or migration
    - `concurrency-tests` for any test that sends overlapping requests
    - `design-change` the moment anything conflicts with or isn't covered by the design
-3. Finish with the `verify-step` skill: typecheck, tests, invariant check, plan checkbox, summary for the human, AI log entry.
+3. Finish with the `verify-step` skill: typecheck, tests, invariant check, plan checkbox, summary for the human.
 
 **Commits:** don't commit unless the human asks. The spec asks for a real development history, so after each step propose a short commit message describing that step.
 

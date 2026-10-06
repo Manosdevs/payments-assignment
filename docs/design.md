@@ -2,8 +2,6 @@
 
 Source of truth for every behaviour in this repo. If code and this doc disagree, the code is wrong or the doc needs a deliberate change (see `.claude/skills/design-change`).
 
-The original assignment is in `docs/spec.pdf`. The reasoning behind each decision, phrased for the interview, is in `docs/justifications.md`.
-
 ## Overview and scope
 
 A small Express + TypeScript service records checkout intents as orders and applies payment-provider webhooks to them. It stays correct under retries, concurrent requests and late or out-of-order events. PostgreSQL, accessed through Drizzle, enforces every correctness rule with constraints and transactions.

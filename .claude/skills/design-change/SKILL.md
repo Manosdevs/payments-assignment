@@ -30,6 +30,5 @@ Pure implementation details that don't change observable behaviour or the guaran
    - Is it more infrastructure than the spec needs?
 6. **Record the decision** before implementing:
    - Update the relevant section of `docs/design.md` (and remove the item from "Open questions" if it was one).
-   - Add an `If asked | Say` row to `docs/justifications.md` using the human's reason, corrected if needed.
-   - If the human's first reason was wrong, add a row to "Traps to avoid".
+   - If the human's first reason was wrong, say so in the design doc's wording of the decision, using the corrected reason.
 7. **Implement**, then continue with the plan.

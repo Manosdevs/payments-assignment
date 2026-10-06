@@ -51,6 +51,6 @@ After test 7 (race B) passes:
 1. Replace `.for('no key update')` with a plain select in the webhook service.
 2. Run test 7. It must **fail**. If it passes, the test isn't exercising the lock: increase the delay or the number of concurrent requests, and fix the test.
 3. Restore the lock. Run it again: it must pass.
-4. Record the result in the README and `docs/ai-log.md`.
+4. Record the result in the README.
 
 Do the same for the checkout test by temporarily removing the unique constraint if time allows.

@@ -19,7 +19,5 @@ pool.on("error", (err) => {
 
 export const db = drizzle({ client: pool, schema });
 
-export type Database = typeof db;
-
 // Resolved from this file, not the working directory: works from src/ (tsx, Jest) and dist/.
 export const migrationsFolder = path.join(__dirname, "../../drizzle");

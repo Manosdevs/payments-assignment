@@ -100,14 +100,14 @@ _Break-it result (2026-10-06): with `.for("no key update")` removed, test 7 fail
 
 Keep it short. Required by the spec:
 
-- [ ] Setup and test commands; configuration; migrations; calling the API; sending sample webhooks; resetting
-- [ ] API formats, data model, allowed status changes
-- [ ] Duplicate requests, event ordering, conflicting events
-- [ ] Transaction boundaries and failure handling
-- [ ] Trade-offs, limitations, unfinished work
-- [ ] What to improve before production
-- [ ] Time spent (the human fills this in)
-- [ ] AI tools: which, for what, and how output was checked (draft from `docs/ai-log.md`; the human edits)
+- [x] Setup and test commands; configuration; migrations; calling the API; sending sample webhooks; resetting
+- [x] API formats, data model, allowed status changes
+- [x] Duplicate requests, event ordering, conflicting events
+- [x] Transaction boundaries and failure handling
+- [x] Trade-offs, limitations, unfinished work
+- [x] What to improve before production
+- [x] Time spent (the human fills this in)
+- [x] AI tools: which, for what, and how output was checked (the human writes it)
 
 Point to `docs/design.md` for detail rather than duplicating it.
 

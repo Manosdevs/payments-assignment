@@ -34,13 +34,20 @@ export const orders = pgTable(
     // Format (^[A-Z]{3}$) is checked in Zod only. See design.md › Data model › orders.
     currency: text("currency").notNull(),
     status: paymentStatus("status").notNull().default("pending"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (t) => [
     // Arbitrates concurrent checkouts: INSERT … ON CONFLICT on this key.
     // See design.md › Checkout idempotency.
-    unique("orders_merchant_id_order_reference_key").on(t.merchantId, t.orderReference),
+    unique("orders_merchant_id_order_reference_key").on(
+      t.merchantId,
+      t.orderReference,
+    ),
     // A non-positive amount is a money bug wherever the row comes from.
     check("orders_amount_positive", sql`${t.amount} > 0`),
   ],
@@ -54,10 +61,12 @@ export const webhookEvents = pgTable("webhook_events", {
     .notNull()
     .references(() => orders.id),
   status: paymentStatus("status").notNull(),
+  // audit only, nothing should be reading this atm
   occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull(),
   outcome: eventOutcome("outcome").notNull(),
-  receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+  receivedAt: timestamp("received_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export type Order = typeof orders.$inferSelect;
-export type WebhookEvent = typeof webhookEvents.$inferSelect;

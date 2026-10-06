@@ -1,6 +1,6 @@
 ---
 name: verify-step
-description: Use at the end of every step in docs/implementation-plan.md, or before saying any piece of work is done. Runs the checks, compares the change against the invariants, updates the plan and AI log, and gives the human a short explanation and a proposed commit message.
+description: Use at the end of every step in docs/implementation-plan.md, or before saying any piece of work is done. Runs the checks, compares the change against the invariants, updates the plan, and gives the human a short explanation and a proposed commit message.
 ---
 
 # Verify a step
@@ -35,27 +35,14 @@ Anything that conflicts with `docs/design.md` → stop and use the `design-chang
 
 Tick the completed items in `docs/implementation-plan.md`. Note anything left unfinished under the step, in one line.
 
-## 4. Log AI help
-
-Append to `docs/ai-log.md` (create it with a `# AI log` heading if missing):
-
-```
-## <date> — Step <n>: <title>
-- What the agent did:
-- What the human decided or changed:
-- How it was checked: (tests, manual curl, reading generated SQL, break-it check)
-```
-
-This feeds the README's required AI-tools section.
-
-## 5. Explain it to the human
+## 4. Explain it to the human
 
 In at most 10 lines:
 
 - What changed, file by file, in plain language.
 - Which section of `docs/design.md` it implements.
-- **One or two things the human should be able to explain** about this step, phrased as interview questions (for example, "Why is the response sent after the transaction resolves?"). Point to the `docs/justifications.md` row if one exists.
+- **One or two things the human should be able to explain** about this step, phrased as interview questions (for example, "Why is the response sent after the transaction resolves?").
 
-## 6. Propose a commit
+## 5. Propose a commit
 
 Suggest one commit message for the step, imperative mood, under 72 characters, for example `Add webhook transaction with order row lock`. Don't commit unless the human asks.
