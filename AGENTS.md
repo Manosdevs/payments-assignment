@@ -48,20 +48,22 @@ Each one is tested or will be. If a change would weaken one, stop and ask.
 - Amounts: `bigint({ mode: 'number' })`, validated as positive integers up to `Number.MAX_SAFE_INTEGER`.
 - Comments explain **why**, especially at lock and transaction sites. Reference the design-doc section, e.g. `// See design.md › Concurrency control`.
 
-### Suggested layout
+### Layout
 
 ```
 src/
-  app.ts              Express app factory (no listen), used by tests and server
-  server.ts           config check → migrate() → listen
-  config.ts           env parsing with Zod; TEST_TX_DELAY_MS guard
-  db/schema.ts        enums, tables, constraints
-  db/client.ts        pg Pool (max = DB_POOL_SIZE) + drizzle instance
-  domain/status.ts    allowedTo table and helpers
-  domain/provider.ts  provider status → our status map
-  http/schemas.ts     Zod request schemas
-  http/orders.ts      POST /orders, GET /orders/:id
-  http/webhooks.ts    POST /webhooks/payments
+  app.ts                    Express app factory (no listen), used by tests and server
+  index.ts                  migrate() → listen
+  config/env.ts             env parsing with Zod; TEST_TX_DELAY_MS guard
+  db/schema.ts              enums, tables, constraints
+  db/index.ts               pg Pool (max = DB_POOL_SIZE) + drizzle instance
+  db/migrate.ts             standalone `npm run db:migrate`
+  domain/status.ts          allowedTo table and helpers
+  domain/provider.ts        provider status → our status map
+  routes/orders.ts          Zod schema; POST /orders, GET /orders/:id
+  routes/webhooks.ts        Zod schema; POST /webhooks/payments
+  routes/mappers.ts         snake_case ↔ camelCase, in one place
+  middleware/error-handler.ts
   services/checkout.ts
   services/webhook.ts
 drizzle/              generated SQL migrations (committed)

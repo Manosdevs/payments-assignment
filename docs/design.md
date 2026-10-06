@@ -371,8 +371,6 @@ The main gap is authentication: everything else here is a deliberate simplificat
 - **Metrics and alerts** for conflicting payloads, unknown orders and `5xx` responses, plus a query on `updated_at` age to find orders stuck in `pending` or `processing`.
 - **ISO 4217 allowlist and exponent checks** if the service ever formats or converts amounts.
 
-**Still to write in the README:** time spent, and which AI tools were used, for what, and how their output was checked.
-
 ## Open questions
 
 Decisions not yet made. An agent must not resolve these on its own; ask the human (see `.claude/skills/design-change`).

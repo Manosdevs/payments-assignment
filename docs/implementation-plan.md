@@ -32,10 +32,10 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 4. App skeleton
 
-- [x] `src/config.ts`: parse env with Zod; refuse to start if `TEST_TX_DELAY_MS` is set and `NODE_ENV !== 'test'`
-- [x] `src/db/client.ts`: `pg` Pool with `max = DB_POOL_SIZE`, drizzle instance
+- [x] `src/config/env.ts`: parse env with Zod; refuse to start if `TEST_TX_DELAY_MS` is set and `NODE_ENV !== 'test'`
+- [x] `src/db/index.ts`: `pg` Pool with `max = DB_POOL_SIZE`, drizzle instance
 - [x] `src/app.ts`: app factory, JSON body parser, error handler returning `500` JSON and logging the error
-- [x] `src/server.ts`: `migrate()` then `listen`
+- [x] `src/index.ts`: `migrate()` then `listen`
 
 **Done when:** `docker compose up --build` migrates and serves; an unknown route returns `404`.
 
