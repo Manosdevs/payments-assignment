@@ -14,10 +14,10 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 2. Docker and configuration
 
-- [ ] `docker-compose.yml`: `db` (pinned Postgres major, port 5432, `pg_isready` healthcheck, volume) and `app` (`depends_on: condition: service_healthy`)
-- [ ] `docker/initdb/01-create-test-db.sql` creates `payments_test`
-- [ ] `Dockerfile` installing all dependencies, Jest included
-- [ ] `.env.example` with `DATABASE_URL`, `TEST_DATABASE_URL`, `PORT`, `DB_POOL_SIZE` and nothing else
+- [x] `docker-compose.yml`: `db` (pinned Postgres major, port 5432, `pg_isready` healthcheck, volume) and `app` (`depends_on: condition: service_healthy`)
+- [x] `docker/initdb/01-create-test-db.sql` creates `payments_test`
+- [x] `Dockerfile` installing all dependencies, Jest included
+- [x] `.env.example` with `DATABASE_URL`, `TEST_DATABASE_URL`, `PORT`, `DB_POOL_SIZE` and nothing else
 
 **Done when:** after `docker compose down -v && docker compose up db`, both databases exist.
 

@@ -9,37 +9,29 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      # Creates payments_test. Postgres runs these only when the volume is empty,
+      # so reset with `docker compose down -v`.
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d payments"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  migrate:
-    build:
-      context: .
-      target: runtime
+  app:
+    build: .
+    env_file:
+      - path: .env
+        required: false
     environment:
+      # Inside the compose network the database host is `db`, not localhost.
       DATABASE_URL: postgres://postgres:postgres@db:5432/payments
-    command: ["node", "dist/db/migrate.js"]
-    depends_on:
-      db:
-        condition: service_healthy
-
-  api:
-    build:
-      context: .
-      target: runtime
-    environment:
-      PORT: 3000
-      DATABASE_URL: postgres://postgres:postgres@db:5432/payments
+      TEST_DATABASE_URL: postgres://postgres:postgres@db:5432/payments_test
     ports:
       - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
 
 volumes:
   pgdata:

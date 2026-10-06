@@ -1,25 +1,15 @@
-FROM node:24-alpine AS base
+# Single stage with all dependencies (Jest included), so the same image can
+# serve the API and run `docker compose run --rm app npm test`.
+# See design.md › Local setup. A slim multi-stage production image is listed
+# under "Before production".
+FROM node:24-alpine
 WORKDIR /app
 
-FROM base AS deps
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM deps AS build
-COPY tsconfig.json ./
-COPY src ./src
+COPY . .
 RUN npm run build
 
-FROM base AS prod-deps
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-FROM base AS runtime
-ENV NODE_ENV=production
-COPY --from=prod-deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY drizzle ./drizzle
-COPY package.json ./
-USER node
 EXPOSE 3000
 CMD ["node", "dist/index.js"]
