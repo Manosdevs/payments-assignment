@@ -1,7 +1,7 @@
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
 import { env } from "../config/env";
-import { AppError, NotFoundError } from "../errors/app-error";
+import { AppError, BadRequestError, NotFoundError } from "../errors/app-error";
 import { logger } from "../logger";
 
 type ErrorBody = {
@@ -28,23 +28,18 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
 };
 
 function toResponse(err: unknown): { status: number; body: ErrorBody } {
+  // Handlers call schema.parse(); a validation failure becomes a 400 listing each problem.
+  if (err instanceof ZodError) {
+    err = new BadRequestError(
+      "Invalid request",
+      err.issues.map(({ path, message, code }) => ({ path, message, code })),
+    );
+  }
+
   if (err instanceof AppError) {
     return {
       status: err.statusCode,
       body: { error: { code: err.code, message: err.message, details: err.details } },
-    };
-  }
-
-  if (err instanceof ZodError) {
-    return {
-      status: 400,
-      body: {
-        error: {
-          code: "VALIDATION_ERROR",
-          message: "Invalid request",
-          details: err.issues.map(({ path, message, code }) => ({ path, message, code })),
-        },
-      },
     };
   }
 

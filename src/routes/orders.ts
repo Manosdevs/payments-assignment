@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { AppError, NotFoundError } from "../errors/app-error";
+import { ConflictError, NotFoundError } from "../errors/app-error";
 import { checkout, findOrder } from "../services/checkout";
 import { fromCheckoutBody, toOrderResponse } from "./mappers";
 
@@ -33,10 +33,8 @@ ordersRouter.post("/", async (req, res) => {
       res.status(200).json(toOrderResponse(result.order));
       return;
     case "mismatch":
-      throw new AppError(
-        409,
+      throw new ConflictError(
         "An order with this merchant_id and order_reference already exists with different details",
-        "ORDER_MISMATCH",
         { mismatched_fields: result.mismatchedFields },
       );
   }
