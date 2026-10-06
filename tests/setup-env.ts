@@ -15,3 +15,7 @@ process.env.DATABASE_URL = testUrl;
 // Pool ≥ concurrent requests, or requests queue in Node and never overlap in Postgres.
 process.env.DB_POOL_SIZE = "20";
 process.env.NODE_ENV = "test";
+// The webhook handler sleeps this long while holding the order lock, so
+// concurrent webhooks are guaranteed to overlap. Set here, not per file:
+// src/config/env.ts reads it at import, before a test file's own code runs.
+process.env.TEST_TX_DELAY_MS = "200";

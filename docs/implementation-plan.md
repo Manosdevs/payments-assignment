@@ -79,13 +79,15 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 9. Webhook tests
 
-- [ ] Test 2: same event delivered 10 times concurrently
-- [ ] Tests 4a, 4b, 4c: stale and conflicting events after success
-- [ ] Test 6: `failed` then `succeeded`
-- [ ] Test 7: race B, `processing` and `succeeded` concurrently with the delay
-- [ ] **Break-it check:** swap the lock for a plain `SELECT`, confirm test 7 fails, restore it, confirm it passes. Record the result for the README.
+- [x] Test 2: same event delivered 10 times concurrently
+- [x] Tests 4a, 4b, 4c: stale and conflicting events after success
+- [x] Test 6: `failed` then `succeeded`
+- [x] Test 7: race B, `processing` and `succeeded` concurrently with the delay
+- [x] **Break-it check:** swap the lock for a plain `SELECT`, confirm test 7 fails, restore it, confirm it passes. Record the result for the README.
 
 **Done when:** all tests are green and the break-it result is written down.
+
+_Break-it result (2026-10-06): with `.for("no key update")` removed, test 7 failed 3/3 (`Expected: "succeeded"`, `Received: "processing"`: the late `processing` read stale `pending` and overwrote `succeeded`); restored, it passed 3/3. Checkout (test 1): select-then-insert passed on a cold pool, so the harness now warms the pool; after that it fails 5/5._
 
 ## 10. Provider simulation
 
