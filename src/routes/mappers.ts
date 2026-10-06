@@ -1,6 +1,9 @@
 import type { Order } from "../db/schema";
+import { providerStatusToPaymentStatus } from "../domain/provider";
 import type { CheckoutInput } from "../services/checkout";
+import type { WebhookInput } from "../services/webhook";
 import type { CheckoutBody } from "./orders";
+import type { WebhookBody } from "./webhooks";
 
 // The one place where API snake_case meets internal camelCase.
 
@@ -10,6 +13,16 @@ export function fromCheckoutBody(body: CheckoutBody): CheckoutInput {
     orderReference: body.order_reference,
     amount: body.amount,
     currency: body.currency,
+  };
+}
+
+// Also maps the provider's status vocabulary to ours.
+export function fromWebhookBody(body: WebhookBody): WebhookInput {
+  return {
+    eventId: body.event_id,
+    orderId: body.order_id,
+    status: providerStatusToPaymentStatus[body.status],
+    occurredAt: new Date(body.occurred_at),
   };
 }
 

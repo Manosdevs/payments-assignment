@@ -69,11 +69,11 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 8. Webhook endpoint
 
-- [ ] Zod schema for the webhook payload, including UUID `order_id` and the provider status vocabulary
-- [ ] `services/webhook.ts`: the exact transaction from design.md › Webhook processing (use `db-code` skill)
-- [ ] `TEST_TX_DELAY_MS` sleep after taking the lock, before the event insert
-- [ ] Logs for unknown order and conflicting payload
-- [ ] The response is sent only after the transaction promise resolves
+- [x] Zod schema for the webhook payload, including UUID `order_id` and the provider status vocabulary
+- [x] `services/webhook.ts`: the exact transaction from design.md › Webhook processing (use `db-code` skill)
+- [x] `TEST_TX_DELAY_MS` sleep after taking the lock, before the event insert
+- [x] Logs for unknown order and conflicting payload
+- [x] The response is sent only after the transaction promise resolves
 
 **Done when:** manual calls cover applied, ignored, duplicate, conflicting duplicate, `400` and `404`.
 
