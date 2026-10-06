@@ -1,0 +1,76 @@
+# Every endpoint, top to bottom. Needs the VS Code REST Client extension
+# (humao.rest-client); start the service first with `docker compose up --build`.
+# Request 1 is named, so later requests reuse the created order's ID.
+
+@baseUrl = http://localhost:3000
+@orderId = {{createOrder.response.body.id}}
+
+### 1. Create a checkout intent → 201 (200 when re-sent with the same body)
+# @name createOrder
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{ "merchant_id": "m_123", "order_reference": "ORD-1001", "amount": 1999, "currency": "EUR" }
+
+### 2. Same reference, different amount → 409, order unchanged
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{ "merchant_id": "m_123", "order_reference": "ORD-1001", "amount": 2500, "currency": "EUR" }
+
+### 3. Same reference, another merchant → 201, a different order
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{ "merchant_id": "m_456", "order_reference": "ORD-1001", "amount": 1999, "currency": "EUR" }
+
+### 4. Invalid checkout (lowercase currency, zero amount) → 400
+POST {{baseUrl}}/orders
+Content-Type: application/json
+
+{ "merchant_id": "m_123", "order_reference": "ORD-1002", "amount": 0, "currency": "eur" }
+
+### 5. Get the order → 200
+GET {{baseUrl}}/orders/{{orderId}}
+
+### 6. Get a malformed or unknown ID → 404
+GET {{baseUrl}}/orders/not-a-uuid
+
+### 7. Webhook: processing → 200, applied
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_processing", "order_id": "{{orderId}}", "status": "processing", "occurred_at": "2026-10-06T12:01:00Z" }
+
+### 8. Webhook: succeeded (fixed event_id) → 200, applied. Send it twice: the second is a duplicate, still 200, applied once
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_duplicate", "order_id": "{{orderId}}", "status": "succeeded", "occurred_at": "2026-10-06T12:01:30Z" }
+
+### 9. Same event_id, different status → 200, never applied, logged as a conflict
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_duplicate", "order_id": "{{orderId}}", "status": "failed", "occurred_at": "2026-10-06T12:01:30Z" }
+
+### 10. Late processing after success → 200, recorded as ignored
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_late", "order_id": "{{orderId}}", "status": "processing", "occurred_at": "2026-10-06T12:00:30Z" }
+
+### 11. Malformed webhook (non-UUID order_id) → 400
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_bad", "order_id": "not-a-uuid", "status": "succeeded", "occurred_at": "2026-10-06T12:01:30Z" }
+
+### 12. Webhook for an unknown order → 404, logged
+POST {{baseUrl}}/webhooks/payments
+Content-Type: application/json
+
+{ "event_id": "evt_demo_unknown", "order_id": "00000000-0000-4000-8000-000000000000", "status": "succeeded", "occurred_at": "2026-10-06T12:01:30Z" }
+
+### 13. Check the final status → succeeded
+GET {{baseUrl}}/orders/{{orderId}}

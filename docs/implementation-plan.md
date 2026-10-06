@@ -91,8 +91,8 @@ _Break-it result (2026-10-06): with `.for("no key update")` removed, test 7 fail
 
 ## 10. Provider simulation
 
-- [ ] `scripts/send-webhook.sh <order_id> <status>` with a generated event ID
-- [ ] `request.http` covering every endpoint, with one fixed `event_id` to demo duplicates
+- [x] `scripts/send-webhook.sh <order_id> <status>` with a generated event ID
+- [x] `request.http` covering every endpoint, with one fixed `event_id` to demo duplicates
 
 **Done when:** both work against `docker compose up`.
 
