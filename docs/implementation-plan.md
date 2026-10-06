@@ -49,10 +49,10 @@ Correctness comes first: the spec says to focus on correct behaviour, then expla
 
 ## 6. Orders endpoints
 
-- [ ] Zod schema for checkout (rules in design.md › API)
-- [ ] `POST /orders`: insert-on-conflict, then select and compare (use `db-code` skill)
-- [ ] `GET /orders/:id`: UUID check first; malformed or unknown → `404`
-- [ ] snake_case response mapping in one place
+- [x] Zod schema for checkout (rules in design.md › API)
+- [x] `POST /orders`: insert-on-conflict, then select and compare (use `db-code` skill)
+- [x] `GET /orders/:id`: UUID check first; malformed or unknown → `404`
+- [x] snake_case response mapping in one place
 
 **Done when:** manual curl gives `201`, then `200` on retry, then `409` with a different amount.
 
