@@ -2,6 +2,7 @@ import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
 import { env } from "../config/env";
 import { AppError, NotFoundError } from "../errors/app-error";
+import { logger } from "../logger";
 
 type ErrorBody = {
   error: {
@@ -16,8 +17,13 @@ export const notFoundHandler: RequestHandler = (req, _res, next) => {
 };
 
 // Express 5 forwards rejected promises from async handlers here automatically.
-export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+// A database error inside a transaction lands here after the rollback, so a
+// 500 means nothing was committed (design.md › Failure handling).
+export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const { status, body } = toResponse(err);
+  if (status >= 500) {
+    logger.error({ err, method: req.method, url: req.originalUrl }, "Unhandled error");
+  }
   res.status(status).json(body);
 };
 
